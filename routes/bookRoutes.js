@@ -8,8 +8,8 @@ router
   .get(bookController.getAllBooks)
   .post(bookController.createBook);
 
-router.route('/available').get(bookController.getAvailableBooks);
-router.route('/:id/borrow').post(bookController.borrowBook);
-router.route('/:id/return').post(bookController.returnBook);
+router.get('/available', bookController.getAvailableBooks);
+router.post('/:id/borrow', bookController.borrowBook);
+router.post('/:id/return', bookController.returnBook);
 
 module.exports = router;
