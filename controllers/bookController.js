@@ -1,54 +1,59 @@
 const Book = require('../models/bookModel');
 
 exports.getAllBooks = async (req, res, next) => {
-  const books = await Book.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: books.length,
-    data: {
-      books,
-    },
-  });
+  try {
+    const books = await Book.find();
+    res.status(200).json({
+      status: 'success',
+      results: books.length,
+      data: { books },
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
 };
 
 exports.getAvailableBooks = async (req, res, next) => {
-  const books = await Book.find({ isBorrowed: false });
+  try {
+    const books = await Book.find({ isBorrowed: false });
 
-  res.status(200).json({
-    status: 'success',
-    results: books.length,
-    data: {
-      books,
-    },
-  });
+    res.status(200).json({
+      status: 'success',
+      results: books.length,
+      data: {
+        books,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ status: 'error', message: err.message });
+  }
 };
 
 exports.createBook = async (req, res, next) => {
   try {
+    const { title, author, description } = req.body;
     const book = await Book.create({
-      description: req.body.description,
-      author: req.body.author,
-      title: req.body.title,
+      description,
+      author,
+      title,
     });
 
-    res.status(200).json({
+    res.status(201).json({
       status: 'success',
       data: {
         book,
       },
     });
   } catch (err) {
-    res.status(400).json({
+    res.status(500).json({
       status: 'fail',
-      message: err,
+      message: err.message,
     });
   }
 };
 
 exports.borrowBook = async (req, res, next) => {
   try {
-    console.log(req.params.id);
     const book = await Book.findById(req.params.id);
 
     if (!book)
@@ -75,8 +80,6 @@ exports.borrowBook = async (req, res, next) => {
 
     await book.save();
 
-    console.log('saving-----');
-
     res.status(200).json({
       status: 'success',
       data: {
@@ -86,7 +89,7 @@ exports.borrowBook = async (req, res, next) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: err,
+      message: err.message,
     });
   }
 };
@@ -123,7 +126,7 @@ exports.returnBook = async (req, res, next) => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: err,
+      message: err.message,
     });
   }
 };
