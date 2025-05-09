@@ -70,6 +70,19 @@ API Endpoints
 3000
 
 🧾 API Endpoints
+
+Base URL for Local testing
+
+```
+127.0.0.1:3000/
+```
+
+Base URL for Live API Server
+
+```
+https://library-management-system-eight-phi.vercel.app/
+```
+
 ➕ Add a Book
 POST api/books
 
