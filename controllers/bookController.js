@@ -1,31 +1,29 @@
 const Book = require('../models/bookModel');
 
+// Utility to send JSON responses
+const sendResponse = (res, statusCode, status, data, message) => {
+  const response = { status };
+  if (message) response.message = message;
+  if (data) response.data = data;
+  res.status(statusCode).json(response);
+};
+
 exports.getAllBooks = async (req, res, next) => {
   try {
     const books = await Book.find();
-    res.status(200).json({
-      status: 'success',
-      results: books.length,
-      data: { books },
-    });
+
+    sendResponse(res, 200, 'success', { books, results: books.length }, null);
   } catch (err) {
-    res.status(500).json({ status: 'error', message: err.message });
+    sendResponse(res, 500, 'fail', null, err.message);
   }
 };
 
 exports.getAvailableBooks = async (req, res, next) => {
   try {
     const books = await Book.find({ isBorrowed: false });
-
-    res.status(200).json({
-      status: 'success',
-      results: books.length,
-      data: {
-        books,
-      },
-    });
+    sendResponse(res, 200, { books, results: books.length }, null);
   } catch (err) {
-    res.status(500).json({ status: 'error', message: err.message });
+    sendResponse(res, 500, 'fail', null, err.message);
   }
 };
 
@@ -37,18 +35,9 @@ exports.createBook = async (req, res, next) => {
       author,
       title,
     });
-
-    res.status(201).json({
-      status: 'success',
-      data: {
-        book,
-      },
-    });
+    sendResponse(res, 201, 'success', { book }, null);
   } catch (err) {
-    res.status(500).json({
-      status: 'fail',
-      message: err.message,
-    });
+    sendResponse(res, 500, 'fail', null, err.message);
   }
 };
 
@@ -57,40 +46,27 @@ exports.borrowBook = async (req, res, next) => {
     const book = await Book.findById(req.params.id);
 
     if (!book)
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Book not found.There is no book with that ID',
-      });
+      return sendResponse(
+        res,
+        400,
+        'fail',
+        null,
+        'Book not found.There is no book with that ID'
+      );
 
     if (book.isBorrowed)
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Book is borrowed already',
-      });
-
+      return sendResponse(res, 400, 'fail', null, 'Book is borrowed already');
     if (!req.body.borrower)
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Borrower is required',
-      });
+      return sendResponse(res, 400, 'fail', null, 'Borrower is required');
 
     book.isBorrowed = true;
     book.borrower = req.body.borrower;
     book.borrowedAt = new Date();
 
     await book.save();
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        book,
-      },
-    });
+    sendResponse(res, 200, 'success', { book }, null);
   } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message,
-    });
+    sendResponse(res, 400, 'fail', null, err.message);
   }
 };
 
@@ -99,17 +75,22 @@ exports.returnBook = async (req, res, next) => {
     const book = await Book.findById(req.params.id);
 
     if (!book)
-      return res.status(400).json({
-        status: 'fail',
-        message: 'Book not found.There is no book with that ID',
-      });
+      return sendResponse(
+        res,
+        400,
+        'fail',
+        null,
+        'Book not found.There is no book with that ID'
+      );
 
     if (!book.isBorrowed)
-      return res.status(400).json({
-        status: 'fail',
-        message:
-          'Book is not borrowed. You can only return borrowed borrowed books',
-      });
+      sendResponse(
+        res,
+        400,
+        'fail',
+        null,
+        'Book is not borrowed. You can only return borrowed borrowed books'
+      );
 
     book.isBorrowed = false;
     book.borrower = null;
@@ -117,16 +98,8 @@ exports.returnBook = async (req, res, next) => {
 
     await book.save();
 
-    res.status(200).json({
-      status: 'success',
-      data: {
-        book,
-      },
-    });
+    sendResponse(res, 200, 'success', { book }, null);
   } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err.message,
-    });
+    sendResponse(res, 400, 'fail', null, err.message);
   }
 };

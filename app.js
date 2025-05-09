@@ -12,12 +12,6 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json({ limit: '10kb' }));
 
 app.use('/api/books', bookRouter);
-// app.all('*', (req, res, next) => {
-//   res.status(400).json({
-//     status: 'fail',
-//     message: 'Route does not exist',
-//   });
-// });
 
 app.use((req, res) => {
   res.status(400).json({
@@ -25,6 +19,13 @@ app.use((req, res) => {
     message: 'Route does not exist',
   });
 });
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ status: 'error', message: err.message });
+});
+
 const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`App running on port ${port}`);
