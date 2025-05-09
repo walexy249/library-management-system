@@ -27,13 +27,14 @@ app.use((err, req, res, next) => {
 });
 
 const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`App running on port ${port}`);
-});
+
 mongoose
   .connect(process.env.DATABASE)
   .then(() => {
     console.log('Database connection successful ✅');
+    app.listen(port, () => {
+      console.log(`App running on port ${port}`);
+    });
   })
   .catch((err) => {
     console.log('Error', err);
