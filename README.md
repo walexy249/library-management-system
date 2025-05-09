@@ -46,22 +46,24 @@ Create a .env file in the root of your project with the following content
 ```
 PORT=3000
 NODE_ENV=development
-DATABASE=mongodb://localhost:27017/library
+DATABASE=mongodb://localhost:27017/lbs
 ```
 
 Install MongoDB
 
-Start MongoDB
+Follow the Mongodb installation instruction for mac or windows depending on your machine
+
+Start Mongo Shell
 Ensure MongoDB is running locally.
 
 ```
-mongod
+mongosh
 ```
 
 Run the application
 
 ```
-npm start
+npm start dev
 ```
 
 API Endpoints
