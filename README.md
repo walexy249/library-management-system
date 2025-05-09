@@ -138,6 +138,8 @@ Return a Book
 POST api/books/:id/return
 
 Response
+
+```
 {
 "status": "success",
 "data": {
@@ -153,6 +155,7 @@ Response
 }
 }
 }
+```
 
 View All Available Books
 GET api/books/available
