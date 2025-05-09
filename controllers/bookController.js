@@ -21,7 +21,7 @@ exports.getAllBooks = async (req, res, next) => {
 exports.getAvailableBooks = async (req, res, next) => {
   try {
     const books = await Book.find({ isBorrowed: false });
-    sendResponse(res, 200, { books, results: books.length }, null);
+    sendResponse(res, 200, 'success', { books, results: books.length }, null);
   } catch (err) {
     sendResponse(res, 500, 'fail', null, err.message);
   }
@@ -89,7 +89,7 @@ exports.returnBook = async (req, res, next) => {
         400,
         'fail',
         null,
-        'Book is not borrowed. You can only return borrowed borrowed books'
+        'Book is not borrowed. You can only return borrowed books'
       );
 
     book.isBorrowed = false;
